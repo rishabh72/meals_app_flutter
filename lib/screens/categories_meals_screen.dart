@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:meals_app/models/meal.dart';
 import '../widgets/meal_item.dart';
-import '../dummy-data.dart';
 
 class CategoriesMealsScreen extends StatefulWidget {
   static const routeName = '/cat-meals';
+  final List<Meal> _meals;
+
+  CategoriesMealsScreen(this._meals);
 
   @override
   State<CategoriesMealsScreen> createState() => _CategoriesMealsScreenState();
@@ -28,7 +30,7 @@ class _CategoriesMealsScreenState extends State<CategoriesMealsScreen> {
         ModalRoute.of(context).settings.arguments as Map<String, String>;
     catTitle = routeArgs['title'];
     final catId = routeArgs['id'];
-    catMeals = DUMMY_MEALS.where((item) {
+    catMeals = widget._meals.where((item) {
       return item.catIds.contains(catId);
     }).toList();
     super.didChangeDependencies();

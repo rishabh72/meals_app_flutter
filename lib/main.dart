@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:meals_app/dummy-data.dart';
-import 'package:meals_app/models/meal.dart';
-import 'package:meals_app/screens/filters_screen.dart';
-import 'package:meals_app/screens/tabs_screen.dart';
+import 'dummy-data.dart';
+import 'models/meal.dart';
+import 'screens/filters_screen.dart';
+import 'screens/tabs_screen.dart';
 import 'screens/meal_detail_screen.dart';
 import 'screens/categories_meals_screen.dart';
 import 'screens/categories_screen.dart';
@@ -22,6 +22,11 @@ class _MyAppState extends State<MyApp> {
     "vegetarian": false,
   };
   List<Meal> _availableMeals = DUMMY_MEALS;
+  List<Meal> _favoriteMeals = [];
+
+  bool _isMealFav(String mId) {
+    return _favoriteMeals.any((element) => element.id == mId);
+  }
 
   void _setFilters(Map<String, bool> filterData) {
     setState(() {
@@ -43,6 +48,22 @@ class _MyAppState extends State<MyApp> {
         return true;
       }).toList();
     });
+  }
+
+  void _toggleFavorite(String mealId) {
+    var existingIndex =
+        _favoriteMeals.indexWhere((element) => element.id == mealId);
+    if (existingIndex >= 0) {
+      setState(() {
+        _favoriteMeals.removeAt(existingIndex);
+      });
+    } else {
+      setState(() {
+        _favoriteMeals.add(
+          DUMMY_MEALS.firstWhere((m) => m.id == mealId),
+        );
+      });
+    }
   }
 
   @override
@@ -68,10 +89,11 @@ class _MyAppState extends State<MyApp> {
             ),
           )),
       routes: {
-        "/": (ctx) => TabsScreen(),
+        "/": (ctx) => TabsScreen(_favoriteMeals),
         CategoriesMealsScreen.routeName: (ctx) =>
             CategoriesMealsScreen(_availableMeals),
-        MealDetailScreen.routeName: (ctx) => MealDetailScreen(),
+        MealDetailScreen.routeName: (ctx) =>
+            MealDetailScreen(_isMealFav, _toggleFavorite),
         FiltersScreen.routeName: (ctx) => FiltersScreen(_filters, _setFilters),
       },
       // onGenerateRoute: (settings) {

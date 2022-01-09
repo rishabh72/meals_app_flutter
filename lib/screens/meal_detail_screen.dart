@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:meals_app/dummy-data.dart';
+import '../dummy-data.dart';
 
 class MealDetailScreen extends StatelessWidget {
   static const routeName = "meal-detail";
+  final Function toggleFav;
+  final Function isFav;
+
+  MealDetailScreen(this.isFav, this.toggleFav);
 
   Widget buildSectionTitle(BuildContext ctx, String title) {
     return Container(
@@ -39,6 +43,14 @@ class MealDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('${selectedMeal.title}'),
+        actions: [
+          IconButton(
+            onPressed: () => toggleFav(mealId),
+            icon: Icon(isFav(mealId)
+                ? Icons.favorite
+                : Icons.favorite_border_outlined),
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
